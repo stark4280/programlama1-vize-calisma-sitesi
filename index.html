@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Programlama 1 | Python Çalışma Platformu</title>
+<style>
+/* Toz pembe, pastel ve okunabilir akademik tema */
+:root {
+    --bg: #fdf8f9; /* Çok hafif toz pembe / kırık beyaz arkaplan */
+    --panel: #ffffff; /* Beyaz kartlar */
+    --line: #f3e8eb; /* Yumuşak pembe-gri çizgiler */
+    --txt: #4a3b3f; /* Koyu antrasit-gül kurusu okunabilir metin rengi */
+    --muted: #857277; /* Pasif metin */
+    --blue: #b56a7f; /* Gül kurusu / soft pembe vurgu rengi */
+    --blue-hover: #9e596c; 
+    --blue-bg: #fceef2; /* Vurgu için çok açık pastel zemin */
+    --mint: #8ca692; /* Doğal adaçayı yeşili */
+    --mint-bg: #f3f7f4; 
+    --red: #c97a7e; /* Soft kiremit/kırmızı */
+    --red-bg: #fdf3f4;
+    --orange: #c48f6a; /* Pastel toprak turuncusu */
+    --orange-bg: #fdf7f3;
+    --code-bg: #4a3b3f; /* Kod alanları için sıcak koyu kahve/gri */
+    --code-txt: #fdf8f9;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--txt);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.wrap { max-width: 1000px; margin: auto; padding: 0 20px; }
+
+/* Üst Kısım */
+header {
+    padding: 60px 0 40px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+}
+.eyebrow { color: var(--blue); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; margin: 15px 0; color: #3a2e31; }
+.lead { color: var(--muted); max-width: 700px; margin: 0 auto; font-size: 1.1rem; }
+
+/* Etiketler */
+.chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 25px; }
+.chip { background: var(--blue-bg); color: var(--blue); border-radius: 20px; padding: 6px 14px; font-size: 0.85rem; font-weight: 500; }
+
+/* Navigasyon - Buton Sorunu Giderildi */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(253, 248, 249, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+nav .wrap { 
+    display: flex; 
+    gap: 8px; 
+    overflow-x: auto; 
+    padding: 12px 0;
+    scrollbar-width: none; /* Firefox */
+}
+nav .wrap::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+
+nav a { 
+    white-space: nowrap; 
+    color: var(--muted); 
+    text-decoration: none; 
+    padding: 8px 14px; 
+    border-radius: 6px; 
+    font-size: 0.95rem; 
+    font-weight: 500; 
+    transition: all 0.2s;
+    background: #ffffff;
+    border: 1px solid var(--line);
+}
+nav a:hover, nav a:active { 
+    background: var(--blue-bg); 
+    color: var(--blue); 
+    border-color: #eecbcd;
+}
+
+/* Ana İçerik */
+main { padding-top: 40px; padding-bottom: 80px; }
+section { margin: 60px 0; scroll-margin-top: 80px; }
+.section-title { font-size: 1.8rem; margin: 5px 0 10px; color: #3a2e31; border-bottom: 2px solid var(--line); padding-bottom: 8px; display:inline-block; }
+.sub { color: var(--muted); margin: 5px 0 25px; font-size: 1.05rem; }
+
+/* Grid ve Kartlar */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.card, .question {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(181, 106, 127, 0.04);
+    margin-bottom: 20px;
+}
+.tag { color: var(--mint); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: inline-block; background: var(--mint-bg); padding: 3px 10px; border-radius: 12px; }
+.tag.alert { color: var(--orange); background: var(--orange-bg); }
+
+h3 { margin: 0 0 12px; color: #3a2e31; font-size: 1.25rem; }
+h4 { margin: 20px 0 10px; color: #3a2e31; font-size: 1.1rem; }
+p { margin: 10px 0; }
+ul { padding-left: 20px; margin-top: 5px; }
+li { margin-bottom: 6px; }
+
+/* Kod Blokları */
+code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+code { color: #a1455d; background: #fae8eb; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+pre {
+    background: var(--code-bg);
+    color: var(--code-txt);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 15px 0;
+}
+pre code { background: transparent; color: inherit; padding: 0; }
+
+/* Tablolar */
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95rem; }
+th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--line); }
+th { color: #3a2e31; font-weight: 600; background: var(--bg); }
+
+/* Uyarı Kutuları */
+.note { border-left: 4px solid var(--orange); background: var(--orange-bg); padding: 16px; border-radius: 0 8px 8px 0; color: #8a5a3a; margin: 20px 0; }
+.error-box { border-left: 4px solid var(--red); background: var(--red-bg); padding: 16px; border-radius: 0 8px 8px 0; color: #944e52; margin: 20px 0; }
+.note b, .error-box b { font-weight: 700; }
+
+/* Butonlar */
+button {
+    cursor: pointer;
+    border: 1px solid #e5d7db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--txt);
+    font-weight: 500;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+button:hover { border-color: var(--blue); background: var(--bg); }
+button.primary { background: var(--blue); color: #ffffff; border-color: var(--blue); box-shadow: 0 4px 6px -1px rgba(181, 106, 127, 0.2); }
+button.primary:hover { background: var(--blue-hover); border-color: var(--blue-hover); }
+
+/* Sınav Alanı */
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap:10px; }
+#progressText { font-weight: 600; color: var(--blue); }
+.progress { height: 10px; background: var(--line); border-radius: 20px; overflow: hidden; margin-bottom: 30px; }
+.progress span { display: block; height: 100%; width: 0; background: var(--blue); transition: width 0.3s ease; }
+
+.qmeta { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.options { display: flex; flex-direction: column; gap: 10px; margin: 18px 0; }
+.option {
+    display: flex;
+    gap: 12px;
+    border: 1px solid var(--line);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.option:hover { background: var(--bg); border-color: #dcbac4; }
+.option input { accent-color: var(--blue); margin-top: 3px; transform: scale(1.1); }
+
+.feedback { display: none; margin-top: 15px; padding: 15px; border-radius: 8px; background: var(--mint-bg); border: 1px solid #c0d6c7; color: #3e5243; }
+.feedback.wrong { background: var(--red-bg); border-color: #f1cfd1; color: #834448; }
+.feedback b { display: block; margin-bottom: 5px; font-size: 1.05rem; }
+
+.result { display: none; padding: 25px; border: 2px solid var(--mint); border-radius: 12px; background: var(--mint-bg); margin-top: 30px; text-align: center; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+
+footer { text-align: center; border-top: 1px solid var(--line); padding: 30px; color: var(--muted); background: #ffffff; }
+
+@media(max-width: 768px) {
+    .grid, .grid-3 { grid-template-columns: 1fr; }
+    header { padding: 40px 0 30px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="wrap">
+<div class="eyebrow">Programlama 1 — Python Hazırlık</div>
+<h1>Eğitim ve Sınav Platformu</h1>
+<p class="lead">Programlama 1 dersinde işlenen veri yapıları, karar mekanizmaları ve temel algoritmalar üzerine hazırlanan detaylı çalışma materyali ve 50 soruluk uygulama testi.</p>
+<div class="chips">
+<span class="chip">Detaylı Konu Özetleri</span>
+<span class="chip">Adım Adım İzleme</span>
+<span class="chip">50 Uygulama Sorusu</span>
+</div>
+</div>
+</header>
+
+<nav>
+<div class="wrap">
+<a href="#degiskenler">Değişkenler</a>
+<a href="#listeler">Listeler</a>
+<a href="#sozlukler">Sözlükler</a>
+<a href="#menu-input">Menü & Input</a>
+<a href="#karar-yapilari">Koşullar (if/else)</a>
+<a href="#operatorler">Operatörler</a>
+<a href="#olasi-senaryolar">Özel Durumlar</a>
+<a href="#sinav"><b style="color:var(--blue)">Testi Çöz</b></a>
+</div>
+</nav>
+
+<main class="wrap">
+
+<!-- BÖLÜM 1: DEĞİŞKENLER (UZATILDI) -->
+<section id="degiskenler">
+<div class="eyebrow">Konu 01</div>
+<h2 class="section-title">Değişkenler ve Veri Türleri</h2>
+<p class="sub">Verileri hafızada tutmanın ve üzerinde işlem yapmanın temeli.</p>
+
+<div class="card">
+    <div class="tag">Kavram ve Mantık</div>
+    <h3>Değişken Nedir ve Neden Kullanılır?</h3>
+    <p>Programlama yaparken yaş, isim, sınav notu gibi verileri aklımızda tutamayız; bunları bellekte depolamamız gerekir. <b>Değişken</b>, bellekteki bu veriye verdiğimiz isimdir. Değişkenler sayesinde verileri tekrar tekrar kullanabilir ve değerlerini güncelleyebiliriz.</p>
+    
+    <h4>Atama Operatörü (=)</h4>
+    <p>Atama yapmak için <code>=</code> operatörü kullanılır. Matematikteki "eşitlik" kavramından tamamen farklıdır; <b>"sağdaki değeri hesapla ve soldaki isme aktar"</b> anlamına gelir.</p>
+    <pre>
+# 1. Aşama: İlk atama
+sayi = 10       # 'sayi' isimli kutuya 10 koyuldu.
+sayi = 25       # Eski 10 silindi, yerine 25 koyuldu.
+
+# 2. Aşama: Kendi değeri üzerinden güncelleme
+sayi = sayi + 5 # sayi'nın mevcut değeri (25) alındı, 5 ile toplandı (30), tekrar sayi'ya atandı.
+sayi += 2       # Üstteki işlemin daha kısa yazımıdır. Sonuç 32 olur.</pre>
+</div>
+
+<div class="grid">
+    <article class="card">
+        <h3>Temel Veri Türleri</h3>
+        <ul>
+            <li><code>int</code>: Tam sayılar (Örn: <code>5</code>, <code>-10</code>, <code>0</code>)</li>
+            <li><code>float</code>: Ondalık sayılar (Örn: <code>3.14</code>, <code>2.0</code>)</li>
+            <li><code>str</code>: Metinler (Örn: <code>"Ali"</code>, <code>"5"</code>)</li>
+            <li><code>bool</code>: Mantıksal (Örn: <code>True</code>, <code>False</code>)</li>
+        </ul>
+        <p>Bir değişkenin türünü öğrenmek için <code>type()</code> fonksiyonu kullanılır.</p>
+        <pre>yas = 20
+isim = "Ahmet"
+ortalama = 75.5
+print(type(yas))  # Çıktı: &lt;class 'int'&gt;</pre>
+    </article>
+    <article class="card">
+        <h3>Tür Dönüşümleri (Type Casting)</h3>
+        <p>Bazen verileri bir türden diğerine dönüştürmemiz gerekir. Bu durum özellikle kullanıcıdan veri alırken önemlidir.</p>
+        <pre>
+x = "5"    # Bu bir metindir (str)
+y = "3"    # Bu da bir metindir (str)
+print(x + y) # Çıktı "53" olur. Metinleri yan yana yazar.
+
+# Sayısal toplama için dönüşüm:
+x_sayi = int(x)
+y_sayi = int(y)
+print(x_sayi + y_sayi) # Çıktı 8 olur.</pre>
+    </article>
+</div>
+</section>
+
+<!-- BÖLÜM 2: LİSTELER (UZATILDI) -->
+<section id="listeler">
+<div class="eyebrow">Konu 02</div>
+<h2 class="section-title">Listeler (list)</h2>
+<p class="sub">Birden fazla değeri sıralı olarak bir arada tutmak.</p>
+
+<div class="card">
+    <div class="tag">Kavram ve Mantık</div>
+    <h3>Liste Nedir, İndeks Neden 0'dan Başlar?</h3>
+    <p>Onlarca öğrencinin notunu ayrı ayrı değişkenlerde (not1, not2, not3...) tutmak imkansızdır. <b>Listeler</b>, tüm değerleri köşeli parantezler <code>[]</code> içerisinde sıralı bir biçimde tutmamızı sağlar. Listedeki her bir veriye <b>eleman</b> denir.</p>
+    <p>Elemanlara ulaşmak için sıra numaraları olan <b>indeksleri</b> kullanırız. Bilgisayar biliminde sayma işlemi bellek adreslemesi nedeniyle 1'den değil, <b>0'dan başlar.</b></p>
+    <pre>meyveler = ["Elma", "Armut", "Muz", "Çilek"]
+# İndeks:      0        1       2       3
+
+print(meyveler[1])    # Çıktı: Armut
+print(len(meyveler))  # Uzunluk (eleman sayısı): 4
+
+# Var Olan Elemanı Değiştirme (Güncelleme)
+meyveler[0] = "Kiraz" # 0. indeks "Elma" iken "Kiraz" olarak güncellendi.
+print(meyveler)       # Çıktı: ['Kiraz', 'Armut', 'Muz', 'Çilek']</pre>
+</div>
+<div class="grid">
+    <article class="card">
+        <h3>Ekleme ve Silme Metotları</h3>
+        <p>Listelere dinamik olarak eleman ekleyebilir veya çıkarabiliriz.</p>
+        <ul style="font-size: 0.95rem;">
+            <li><code>append(x)</code>: Listenin <b>en sonuna</b> yeni bir eleman ekler.</li>
+            <li><code>insert(i, x)</code>: Belirtilen <b>indeks numarasına</b> araya ekler, diğerlerini sağa kaydırır.</li>
+            <li><code>remove(x)</code>: İsmi verilen elemanı bulup siler.</li>
+            <li><code>pop()</code>: Listenin en sondaki elemanını siler (içine indeks yazılırsa o indeksi siler).</li>
+        </ul>
+        <pre>sayilar = [10, 20]
+sayilar.append(30)    # [10, 20, 30]
+sayilar.insert(1, 15) # [10, 15, 20, 30]
+sayilar.pop()         # Sonda olan 30'u siler</pre>
+    </article>
+    <article class="card">
+        <h3>Diğer Önemli Metotlar</h3>
+        <ul style="font-size: 0.95rem;">
+            <li><code>sort()</code>: Listeyi küçükten büyüğe (alfabetik) sıralar.</li>
+            <li><code>reverse()</code>: Listenin mevcut sırasını tam tersine (sondan başa doğru) çevirir.</li>
+        </ul>
+        <div class="error-box" style="margin-top: 15px; padding: 10px;"><b>Kritik Ayrım:</b> <code>liste[1] = 50</code> yeni eleman EKLEMEZ; var olanı ezer. Yeni eleman eklemek için <code>append()</code> veya <code>insert()</code> kullanılmalıdır.</div>
+    </article>
+</div>
+</section>
+
+<!-- BÖLÜM 3: SÖZLÜKLER (UZATILDI) -->
+<section id="sozlukler">
+<div class="eyebrow">Konu 03</div>
+<h2 class="section-title">Sözlükler (dictionary)</h2>
+<p class="sub">Key (Anahtar) ve Value (Değer) ilişkisine dayalı veri tutma.</p>
+
+<div class="card">
+    <div class="tag">Kavram ve Mantık</div>
+    <h3>Sözlük Nedir, Listelere Göre Avantajı Nedir?</h3>
+    <p>Bir öğrencinin bilgilerini listede <code>["Ali", 20, "Yazılım"]</code> şeklinde tutarsak, 1. indeksteki (20) verinin yaş mı, not mu yoksa başka bir şey mi olduğunu bilemeyiz. <b>Sözlükler</b> bu belirsizliği ortadan kaldırır. Verileri sıra numarasıyla (indeks) değil, bizim belirlediğimiz isimlerle <b>(Key - Anahtar)</b> tutarlar.</p>
+    <p>Sözlükler süslü parantez <code>{}</code> ile oluşturulur.</p>
+    <pre>ogrenci = {
+    "ad": "Ali",
+    "yas": 20
+}
+
+# Erişim (Listelerdeki indeksin yerini Key alır)
+print(ogrenci["ad"])  # Çıktı: Ali
+
+# Değer Güncelleme (Anahtar zaten varsa değerini değiştirir)
+ogrenci["yas"] = 21
+
+# Yeni Veri Ekleme (Anahtar daha önce yoksa otomatik yeni olarak ekler)
+ogrenci["bolum"] = "Yazılım"
+
+print(ogrenci)
+# Çıktı: {'ad': 'Ali', 'yas': 21, 'bolum': 'Yazılım'}</pre>
+</div>
+<div class="grid-3">
+    <article class="card" style="padding:15px">
+        <h3 style="font-size:1.1rem; color:var(--blue)">keys()</h3>
+        <p style="font-size:0.9rem">Sadece sol taraftaki anahtarları listeler. Örneğin: <code>dict_keys(['ad', 'yas'])</code></p>
+    </article>
+    <article class="card" style="padding:15px">
+        <h3 style="font-size:1.1rem; color:var(--blue)">values()</h3>
+        <p style="font-size:0.9rem">Sadece sağ taraftaki değerleri listeler. Örneğin: <code>dict_values(['Ali', 21])</code></p>
+    </article>
+    <article class="card" style="padding:15px">
+        <h3 style="font-size:1.1rem; color:var(--blue)">items()</h3>
+        <p style="font-size:0.9rem">İkisini birden (anahtar, değer) çiftler halinde tuple olarak getirir.</p>
+    </article>
+</div>
+<div class="note"><b>İndeks vs Key Farkı:</b> <code>liste[0]</code> listelerde baştaki ilk elemanı getirir. Ancak <code>sozluk[0]</code> sözlüğün ilk elemanını <b>getirmez</b>; sözlüğün içinde gerçekten <code>0</code> adında bir sayısal anahtar varsa çalışır.</div>
+</section>
+
+<!-- BÖLÜM 4: MENÜ SİSTEMİ (DETAYLANDIRILDI) -->
+<section id="menu-input">
+<div class="eyebrow">Konu 04</div>
+<h2 class="section-title">Kullanıcıdan Veri Alma (input) ve Menü Tasarımı</h2>
+<p class="sub">Uygulamayı etkileşimli hale getirmek.</p>
+
+<div class="card">
+    <div class="tag">Adım Adım İnceleme</div>
+    <h3>Örnek: Sözlük ve Input ile Menü</h3>
+    <pre>secenekler = {
+    1: "Öğrenci bilgilerini göster",
+    2: "Notları göster"
+}
+
+secim = int(input("Seçiminiz (1 veya 2): "))
+
+if secim in secenekler:
+    print(secenekler[secim])
+else:
+    print("Geçersiz seçim")</pre>
+    
+    <h4>Satır Satır Ne Oluyor?</h4>
+    <ul>
+        <li><code>secenekler = {...}</code>: Anahtarları sayı (int) olan bir sözlük oluşturur. Anahtarlar: 1 ve 2.</li>
+        <li><code>input(...)</code>: Kullanıcı ekrana bir şey yazıp Enter'a basana kadar programı bekletir. Gelen veriyi her zaman <b>metin (str)</b> olarak alır. (Yani "1" veya "2" olarak).</li>
+        <li><code>int(...)</code>: input'tan gelen metni ("1") tam sayıya dönüştürür. Bu adım kritiktir; dönüştürmeseydik, "1" metni ile sayı olan 1 eşleşmeyeceği için menü hiçbir zaman çalışmazdı.</li>
+        <li><code>if secim in secenekler:</code>: <code>in</code> operatörü, girilen rakamın sözlüğün <b>anahtarları (keys)</b> arasında olup olmadığına bakar. Değerlerde arama yapmaz.</li>
+        <li>Kullanıcı <code>1</code> girerse, if bloğu çalışır ve <code>secenekler[1]</code> ekrana yazdırılır.</li>
+        <li>Kullanıcı menüde olmayan <code>3</code> girerse, sözlükte böyle bir anahtar olmadığı için <code>else</code> bloğu devreye girer.</li>
+    </ul>
+</div>
+</section>
+
+<!-- BÖLÜM 5: KARAR YAPILARI -->
+<section id="karar-yapilari">
+<div class="eyebrow">Konu 05</div>
+<h2 class="section-title">Karar Yapıları: if / elif / else</h2>
+<p class="sub">Koşullara göre kodun akış yönünü değiştirmek.</p>
+
+<div class="grid">
+    <article class="card">
+        <h3>Mantığı Anlamak ve İlk Doğru Kuralı</h3>
+        <p>Programlar her zaman baştan sona tek düze akmazlar. Şartlara göre (koşullara göre) karar vermeleri gerekir. Koşullar, sonucu <b>True</b> veya <b>False</b> çıkan mantıksal sorulardır.</p>
+        <pre>notu = 75
+
+if notu >= 85:          # 75>=85 False, aşağı geç.
+    print("Harf: AA")
+elif notu >= 70:        # 75>=70 True! Buraya girer.
+    print("Harf: BB")
+elif notu >= 50:        # Burası da doğru AMA çalışmaz!
+    print("Harf: CC")
+else:
+    print("Harf: FF")</pre>
+    <p><b>Önemli Kural:</b> Python, if-elif yapılarında doğru (True) olan <b>ilk koşulu</b> çalıştırır ve o bloğu tamamen terk eder. Üstteki örnekte 75 her iki koşulu da (>=70 ve >=50) sağlar. Ancak ilk gördüğü elif çalıştırılır, diğeri atlanır.</p>
+    </article>
+    <article class="card">
+        <h3>Girintinin (Indentation) Önemi</h3>
+        <p>Python'da bir kodun if bloğuna (içine) ait olup olmadığını <b>girintiler</b> (satır başındaki boşluklar) belirler. Süslü parantez kullanılmaz.</p>
+        <pre>x = 10
+if x > 15:
+    print("Büyük")
+    print("Şart sağlandı")
+print("Program bitti")</pre>
+        <p>Yukarıdaki kodda 10 > 15 yanlıştır, girintili olan ilk iki print çalışmaz. Ancak son satır girintili olmadığı için if'in dışındadır ve her halükarda ekrana "Program bitti" yazdırılır.</p>
+    </article>
+</div>
+</section>
+
+<!-- BÖLÜM 6: OPERATÖRLER -->
+<section id="operatorler">
+<div class="eyebrow">Konu 06</div>
+<h2 class="section-title">Operatörlerin Sınıflandırılması</h2>
+
+<div class="card">
+    <table>
+        <tr>
+            <th style="width: 25%">Kategori</th>
+            <th style="width: 20%">Operatörler</th>
+            <th>Ne İşe Yarar ve Önemli Detaylar</th>
+        </tr>
+        <tr>
+            <td><b>Aritmetik</b></td>
+            <td><code>+ - * / // % **</code></td>
+            <td>
+                <code>/</code> ondalıklı bölme yapar. <code>//</code> <b>taban bölmedir</b> (tam kısmı alır).<br>
+                <code>%</code> (Mod) bölme işleminden <b>kalanı</b> verir. Çift sayı kontrolü için <code>sayi % 2 == 0</code> kullanılır.
+            </td>
+        </tr>
+        <tr>
+            <td><b>Karşılaştırma</b></td>
+            <td><code>== != &gt; &lt; &gt;= &lt;=</code></td>
+            <td>Matematiksel işlemin aksine geriye sayı değil, <b>True</b> veya <b>False</b> döndürürler. <code>!=</code> (eşit değildir) anlamına gelir.</td>
+        </tr>
+        <tr>
+            <td><b>Mantıksal</b></td>
+            <td><code>and or not</code></td>
+            <td>
+                <code>and</code>: Tüm koşulların True olmasını gerektirir.<br>
+                <code>or</code>: Sadece bir koşulun True olması yeterlidir.<br>
+                <code>not</code>: Çıkan sonucu tam tersine çevirir.
+            </td>
+        </tr>
+        <tr>
+            <td><b>Üyelik</b></td>
+            <td><code>in <br>not in</code></td>
+            <td>Listenin veya sözlüğün (sadece anahtarlarında) bir değerin var olup olmadığını True/False olarak kontrol eder.</td>
+        </tr>
+    </table>
+</div>
+</section>
+
+<!-- BÖLÜM 7: ÖZEL DURUMLAR VE HATA YÖNETİMİ -->
+<section id="olasi-senaryolar">
+<div class="eyebrow">Akademik Notlar</div>
+<h2 class="section-title">Özel Durumlar ve Hata Yönetimi</h2>
+<p class="sub">Programlama pratiklerinde sıkça yapılan mantıksal hatalar ve dikkat edilmesi gereken sınır durumları.</p>
+
+<div class="grid">
+    <article class="card">
+        <div class="tag alert">Durum 1: input() Türü</div>
+        <h3>Sayısal İşlem Uyuşmazlığı</h3>
+        <pre>x = input("Yaşınız: ")
+print(x * 2)</pre>
+        <p>Kullanıcı 10 değeri girerse çıktı 20 <b>olmaz</b>. <code>input()</code> veriyi daima metin (str) türünde alır. Bu nedenle çıktı <b>"1010"</b> olur. Matematiksel işlemler için <code>int(input())</code> kullanımı gereklidir.</p>
+    </article>
+    
+    <article class="card">
+        <div class="tag alert">Durum 2: Sınır Değerleri</div>
+        <h3>Eşitsizlik Koşulları</h3>
+        <pre>notu = 50
+if notu > 50:
+    print("Geçti")
+else:
+    print("Kaldı")</pre>
+        <p>Sınır değeri olan 50 değişkenine atandığında; 50, 50'den büyük olmadığı için (eşitlik yoktur) program doğrudan <code>else</code> bloğuna geçer ve <b>"Kaldı"</b> çıktısını üretir.</p>
+    </article>
+
+    <article class="card">
+        <div class="tag alert">Durum 3: İndeks Sınır Aşımı</div>
+        <h3>len() ile İndeks İlişkisi</h3>
+        <pre>sayilar = [5, 10, 15]
+uzunluk = len(sayilar) # Çıktı: 3
+print(sayilar[uzunluk])</pre>
+        <p>Eleman sayısı 3'tür ancak listedeki indeksler 0, 1 ve 2'dir. <code>sayilar[3]</code> biçimindeki bir erişim girişimi programda listenin sınırlarını aştığı için <b>IndexError</b> hatasına sebep olur.</p>
+    </article>
+
+    <article class="card">
+        <div class="tag alert">Durum 4: Mod (%) Kullanımı</div>
+        <h3>Bölünebilme Kontrolü</h3>
+        <pre>if sayi % 3 == 0:</pre>
+        <p>Bir sayının "çift olması", "tek olması" veya "belirli bir sayıya tam bölünmesi" gibi koşullar, bölme işleminin kalanını kontrol eden <b>Mod (%)</b> operatörüyle sağlanır.</p>
+    </article>
+</div>
+</section>
+
+<!-- BÖLÜM 8: SINAV -->
+<section id="sinav">
+<div class="eyebrow">Değerlendirme</div>
+<h2 class="section-title">50 Soruluk Uygulama Testi</h2>
+<p class="sub">Öğrenilen temel kavramları pekiştirmek için hazırlanan uygulama testi.</p>
+
+<div class="card" style="border:none; box-shadow: 0 4px 6px rgba(181, 106, 127, 0.03); padding: 30px; background: #ffffff;">
+    <div class="toolbar">
+        <strong id="progressText">0 / 50 cevaplandı</strong>
+        <button onclick="resetExam()">Testi Sıfırla</button>
+    </div>
+    <div class="progress">
+        <span id="progressFill"></span>
+    </div>
+    
+    <div id="questions"></div>
+    
+    <div class="actions" style="margin-top: 40px; justify-content: center;">
+        <button class="primary" onclick="gradeExam()" style="padding: 14px 28px; font-size:1.15rem; width: 100%; max-width: 400px;">Testi Bitir ve Değerlendir</button>
+    </div>
+    
+    <div class="result" id="result"></div>
+</div>
+</section>
+
+</main>
+<footer>
+    Programlama 1 — Python Çalışma Platformu <br>
+    <small>Bu HTML dosyası internetsiz ortamda çalışabilmesi için tüm biçimlendirme ve işlevleri kendi içinde barındırır.</small>
+</footer>
+
+<script>
+const qs = [{"t": "Değişkenler", "q": "<code>sayi = 10<br>sayi += 5<br>sayi = sayi + 2</code><br>Yukarıdaki kod çalıştığında <code>sayi</code> değişkeninin son değeri ne olur?", "o": ["10", "15", "17", "7"], "a": 2, "e": "Önce 10 atanır, <code>+= 5</code> ile değer 15 olur. Sonra <code>sayi = 15 + 2</code> işlemiyle son değer 17 olarak güncellenir."}, {"t": "Değişkenler", "q": "Hangi operatör bir değişkene değer atamak için kullanılır?", "o": ["==", "=", "in", "type"], "a": 1, "e": "<code>=</code> atama operatörüdür. <code>==</code> ise iki değerin eşit olup olmadığını kontrol eder."}, {"t": "Veri Türleri", "q": "<code>type(3.14)</code> kodunun çıktısı hangi veri türünü gösterir?", "o": ["int", "str", "bool", "float"], "a": 3, "e": "Ondalıklı sayılar Python'da <code>float</code> veri türüyle temsil edilir."}, {"t": "Değişkenler", "q": "<code>x = '5'<br>y = '3'<br>print(x + y)</code><br>Kodunun çıktısı nedir?", "o": ["8", "53", "Hata verir", "15"], "a": 1, "e": "Değerler metin (str) olduğu için <code>+</code> operatörü matematiksel toplama yapmaz, metinleri yan yana birleştirir ('53')."}, {"t": "Değişkenler", "q": "Bir değişkenin değerini mevcut değerini kullanarak değiştirmek için hangisi <u>yanlıştır</u>?", "o": ["x = x + 1", "x += 1", "x == x + 1", "x = x - (-1)"], "a": 2, "e": "<code>x == x + 1</code> bir karşılaştırma ifadesidir (False döner), değişkene yeni bir değer atamaz."}, {"t": "Listeler", "q": "<code>isimler = ['Ali', 'Ayşe', 'Can']</code> listesindeki 'Ayşe' verisine erişmek için hangi kod kullanılmalıdır?", "o": ["isimler[1]", "isimler[2]", "isimler['Ayşe']", "isimler(1)"], "a": 0, "e": "Listelerde indeks 0'dan başlar. 'Ali' 0. indeks, 'Ayşe' ise 1. indekstir."}, {"t": "Listeler", "q": "<code>liste = [10, 20, 30]<br>liste[1] = 50</code><br>İşleminden sonra listenin durumu ne olur?", "o": ["[10, 20, 30, 50]", "[50, 20, 30]", "[10, 50, 30]", "[10, 50]"], "a": 2, "e": "<code>liste[1] = 50</code> işlemi, 1. indeksteki (20) elemanın mevcut değerini siler ve yerine 50 yazar."}, {"t": "Listeler", "q": "Listenin <u>sonuna</u> yeni bir eleman ekleyen metot hangisidir?", "o": ["insert()", "add()", "append()", "push()"], "a": 2, "e": "<code>append()</code> metodu listeye her zaman en sondan yeni bir eleman ekler."}, {"t": "Listeler", "q": "<code>liste = [5, 10, 15]<br>liste.insert(1, 8)</code><br>Bu kod ne yapar?", "o": ["1. indeksi silip 8 yazar", "Listenin sonuna 1 ve 8 ekler", "1. indekse 8 ekler ve diğer elemanları sağa kaydırır", "Hata verir"], "a": 2, "e": "<code>insert(indeks, değer)</code> araya eleman ekler. 1. indekse 8 gelir, eski 1. indeks (10) sağa kayar. Sonuç: <code>[5, 8, 10, 15]</code>."}, {"t": "Listeler", "q": "Aşağıdakilerden hangisi bir listeden eleman <u>silmek</u> için kullanılmaz?", "o": ["remove()", "pop()", "del", "sort()"], "a": 3, "e": "<code>sort()</code> listeyi sıralar, eleman silmez. <code>remove</code>, <code>pop</code> ve <code>del</code> silme işlemi yapar."}, {"t": "Listeler", "q": "<code>sayilar = [4, 7, 2, 9]<br>sayilar.pop()</code><br>İşleminin ardından liste ne hale gelir?", "o": ["[]", "[7, 2, 9]", "[4, 7, 2]", "Hata verir"], "a": 2, "e": "İçine indeks yazılmadığında <code>pop()</code> her zaman listenin en sonundaki elemanı (9) siler."}, {"t": "Listeler", "q": "Beş elemanlı bir <code>liste</code> için aşağıdaki kodlardan hangisi <u>kesinlikle</u> hata (IndexError) verir?", "o": ["liste[0]", "liste[4]", "liste[len(liste)]", "liste[2]"], "a": 2, "e": "5 elemanlı listenin uzunluğu 5'tir. İndeksler 0'dan 4'e kadardır. <code>liste[5]</code> mevcut olmadığı için sınır dışı (IndexError) hatası verir."}, {"t": "Listeler", "q": "Listenin elemanlarını ters çevirmek için hangi metot kullanılır?", "o": ["sort()", "reverse()", "inverse()", "back()"], "a": 1, "e": "<code>reverse()</code> metodu listenin mevcut sırasını tam tersine çevirir."}, {"t": "Sözlükler", "q": "Sözlük (dictionary) veri yapısında değerlere (value) nasıl erişilir?", "o": ["Sıra numarası (indeks) ile", "Anahtar (key) ile", "Satır numarası ile", "Sadece döngü ile"], "a": 1, "e": "Sözlüklerde indeks yoktur. Her değere kendi anahtarı (key) ile, örneğin <code>sozluk['ad']</code> şeklinde erişilir."}, {"t": "Sözlükler", "q": "<code>bilgi = {'yas': 20}<br>bilgi['yas'] = 21</code><br>Bu kodun işlevi nedir?", "o": ["Yeni bir 'yas' anahtarı daha ekler", "Mevcut 'yas' değerini 21 olarak günceller", "Kod hata verir", "Sözlüğü temizler"], "a": 1, "e": "Eğer anahtar sözlükte zaten varsa, atama işlemi mevcut değeri günceller. İki tane aynı anahtardan bulunamaz."}, {"t": "Sözlükler", "q": "Sözlüğe yeni bir anahtar-değer çifti eklemek için doğru sözdizimi hangisidir?", "o": ["sozluk.append('bolum' = 'Bilgisayar')", "sozluk['bolum'] = 'Bilgisayar'", "sozluk.add('bolum', 'Bilgisayar')", "sozluk.insert('bolum', 'Bilgisayar')"], "a": 1, "e": "Sözlükte olmayan bir anahtara atama yapıldığında (<code>sozluk[yeni_key] = deger</code>), bu çift otomatik olarak sözlüğe eklenir."}, {"t": "Sözlükler", "q": "Bir sözlükteki <u>sadece anahtarları</u> (keys) almak için hangi metot kullanılır?", "o": ["keys()", "values()", "items()", "get()"], "a": 0, "e": "<code>keys()</code> sadece anahtarları, <code>values()</code> sadece değerleri, <code>items()</code> ise ikili çiftleri döndürür."}, {"t": "Sözlükler", "q": "<code>notlar = {'Ali': 50, 'Can': 80}<br>print(notlar['Ayşe'])</code><br>Bu kod çalıştırıldığında ne olur?", "o": ["0 yazdırır", "None yazdırır", "KeyError (Anahtar Hatası) verir", "Boş metin yazdırır"], "a": 2, "e": "Köşeli parantez ile erişim yaparken anahtar sözlükte yoksa <code>KeyError</code> hatası fırlatılır. (Hata almamak için <code>get()</code> kullanılır)."}, {"t": "Sözlükler", "q": "Hangisi sözlük (dictionary) ve liste (list) arasındaki temel bir farktır?", "o": ["Listeler süslü {}, sözlükler köşeli [] parantezle oluşturulur", "Listelerde veriler sırasızdır, sözlüklerde indekslidir", "Listelerde elemanlara indeksle, sözlüklerde anahtarla erişilir", "Listeler değiştirilebilir, sözlükler değiştirilemez"], "a": 2, "e": "En temel fark erişim mantığıdır. Liste <code>liste[0]</code> gibi indeks ile, sözlük <code>sozluk['anahtar']</code> gibi key ile çalışır."}, {"t": "Sözlükler", "q": "Sözlüklerde anahtar (key) olarak aşağıdakilerden hangisi <u>kullanılamaz</u>?", "o": ["Sayı (int)", "Metin (str)", "Liste (list)", "Ondalık sayı (float)"], "a": 2, "e": "Sözlük anahtarları değiştirilemez (immutable) veri türlerinden olmalıdır. Listeler değiştirilebilir olduğu için anahtar olarak kullanılamazlar."}, {"t": "Sözlükler", "q": "<code>ayarlar = {'ses': 50}<br>ayarlar.update({'parlaklik': 80})</code><br>Kodunun sonucu nedir?", "o": ["Ses silinir, sadece parlaklık kalır", "Sözlüğe 'parlaklik' anahtarı ve 80 değeri eklenir", "Hata verir", "Listeye dönüşür"], "a": 1, "e": "<code>update()</code> metodu sözlüğe başka bir sözlüğün içeriğini ekler veya var olanları günceller."}, {"t": "Menü / Input", "q": "<code>secim = input('Seçiminiz: ')</code><br>Kullanıcı klavyeden 1 tuşuna basarsa <code>secim</code> değişkeninin türü ne olur?", "o": ["int (Tam sayı)", "str (Metin)", "bool (Mantıksal)", "float (Ondalıklı)"], "a": 1, "e": "<code>input()</code> fonksiyonu kullanıcı ne girerse girsin (sayı bile olsa) her zaman <b>metin (str)</b> olarak döndürür."}, {"t": "Menü / Input", "q": "Klavyeden girilen değeri matematiksel bir işlemde veya sözlüğün sayısal anahtarında kullanmak için nasıl düzeltmeliyiz?", "o": ["secim = input()", "secim = str(input())", "secim = int(input())", "secim = input(int)"], "a": 2, "e": "Metni tam sayıya çevirmek için <code>input()</code> fonksiyonunu <code>int()</code> içine almalıyız."}, {"t": "Menü / Input", "q": "<code>menuler = {1: 'Ayarlar', 2: 'Çıkış'}<br>secim = 3<br>if secim in menuler:</code><br>Buradaki <code>in</code> operatörü neyi kontrol eder?", "o": ["3 değerinin (value) menülerde olup olmadığını", "3 sayısının menülerde anahtar (key) olup olmadığını", "Menünün uzunluğunun 3 olup olmadığını", "3. indeksi"], "a": 1, "e": "<code>in</code> operatörü sözlükler üzerinde kullanıldığında, aranan değerin sözlükte bir <b>anahtar (key)</b> olarak bulunup bulunmadığını kontrol eder."}, {"t": "Menü / Input", "q": "Kullanıcının girdiği bir seçimin menüde (sözlükte) <u>olmadığını</u> kontrol etmek ve uyarı vermek için genellikle hangi yapı kullanılır?", "o": ["Sadece if", "if - else", "for döngüsü", "append metodu"], "a": 1, "e": "Seçim varsa <code>if</code> bloğu çalışır, geçerli bir seçim yapılmadıysa <code>else</code> bloğu (Geçersiz Seçim uyarı) çalıştırılır."}, {"t": "Menü / Input", "q": "<code>islemler = {1: 'Topla'}<br>x = input('Seç: ')<br>print(islemler[x])</code><br>Kullanıcı 1 girerse neden KeyError hatası alır?", "o": ["'Topla' yazısı sayı değildir", "input() metin döndürür, ancak sözlüğün anahtarı int (1) türündedir", "Sözlükler köşeli parantezle çağrılmaz", "islemler[1] kullanımı yanlıştır"], "a": 1, "e": "<code>input()</code> '1' (metin) döndürür. Sözlükte ise key olarak 1 (sayı) vardır. Türler eşleşmediği için bulamaz. <code>int(input())</code> kullanılmalıdır."}, {"t": "Karar Yapıları", "q": "<code>notu = 60<br>if notu > 60:<br>&nbsp;&nbsp;&nbsp;&nbsp;print('Geçti')<br>else:<br>&nbsp;&nbsp;&nbsp;&nbsp;print('Kaldı')</code><br>Çıktı nedir?", "o": ["Geçti", "Kaldı", "Hata verir", "Hiçbir şey yazdırmaz"], "a": 1, "e": "60, 60'tan büyük değildir (eşitlik vardır). Bu yüzden koşul False olur ve <code>else</code> bloğu (Kaldı) çalışır."}, {"t": "Karar Yapıları", "q": "Birden fazla koşulun sırayla kontrol edilmesi gerektiğinde hangi yapı kullanılır?", "o": ["Sadece if", "if - elif - else", "if - then", "switch - case"], "a": 1, "e": "İlk koşul <code>if</code>, aradaki alternatif koşullar <code>elif</code>, hiçbiri değilse <code>else</code> bloğunda değerlendirilir."}, {"t": "Karar Yapıları", "q": "<code>x = 10<br>if x > 5:<br>&nbsp;&nbsp;&nbsp;&nbsp;print('A')<br>elif x > 8:<br>&nbsp;&nbsp;&nbsp;&nbsp;print('B')</code><br>Çıktı ne olur?", "o": ["A ve B", "Sadece B", "Sadece A", "Çıktı vermez"], "a": 2, "e": "<code>if - elif</code> yapısında <b>yalnızca ilk doğru (True) olan blok</b> çalışır. <code>x > 5</code> doğru olduğu için 'A' yazılır, program diğer koşullara bakmaz."}, {"t": "Karar Yapıları", "q": "Python'da <code>if</code> bloğunun içine hangi kodların ait olduğunu nasıl belirtiriz?", "o": ["Süslü parantez {} ile", "Satır sonuna noktalı virgül koyarak", "Satır başında girinti (Boşluk/Tab) bırakarak", "end kelimesi yazarak"], "a": 2, "e": "Python'da blok yapıları sekme (girinti) ile oluşturulur. Girintili yazılan her satır o bloğa ait kabul edilir."}, {"t": "Karar Yapıları", "q": "<code>if yas >= 18:</code> satırının sonundaki iki nokta üst üste (<code>:</code>) işareti ne anlama gelir?", "o": ["Koşulun bittiğini ve bloğun başlayacağını gösterir", "Ekrana yazdırma komutudur", "Değişken tanımını bitirir", "Eşitlik anlamına gelir"], "a": 0, "e": "İki nokta üst üste (<code>:</code>), koşul veya tanım cümlesinin bittiğini, bir alt satırda girintili kod bloğunun başlayacağını Python'a bildirir."}, {"t": "Operatörler", "q": "<code>14 % 3</code> işleminin sonucu nedir?", "o": ["4", "4.66", "2", "3"], "a": 2, "e": "<code>%</code> (Mod) operatörü bölme işleminden <b>kalanı</b> verir. 14'ün 3'e bölümünden kalan 2'dir."}, {"t": "Operatörler", "q": "Mantıksal operatörlerden <code>or</code> (veya) operatörünün True sonucunu vermesi için ne gerekir?", "o": ["Tüm koşulların True olması", "Koşullardan en az birinin True olması", "Tüm koşulların False olması", "Koşulların birbirine eşit olması"], "a": 1, "e": "<code>or</code> operatöründe sadece bir koşulun bile doğru (True) olması, tüm sonucun True olması için yeterlidir."}, {"t": "Operatörler", "q": "<code>20 // 6</code> işleminin (Taban bölme) sonucu nedir?", "o": ["3", "3.33", "2", "0"], "a": 0, "e": "<code>//</code> operatörü kalansız (tam sayı) bölme yapar ve ondalık kısmı atar. 20'nin içinde 6 tam olarak 3 kere vardır."}, {"t": "Operatörler", "q": "Aşağıdakilerden hangisi eşitsizliği (birbirine eşit olmadığını) kontrol eden operatördür?", "o": ["<>", "!==", "not ==", "!="], "a": 3, "e": "<code>!=</code> operatörü 'eşit değil mi?' sorusunu sorar. Eşit değillerse True döner."}, {"t": "Fonksiyonlar", "q": "<code>len()</code> fonksiyonunun görevi nedir?", "o": ["Listeyi sıralamak", "Liste, sözlük veya metinlerin karakter/eleman sayısını bulmak", "Veri türünü öğrenmek", "En büyük sayıyı bulmak"], "a": 1, "e": "<code>len()</code> (length - uzunluk) fonksiyonu içine aldığı yapının kaç elemandan oluştuğunu tam sayı olarak döndürür."}, {"t": "Fonksiyonlar", "q": "Sayısal elemanlardan oluşan bir listedeki değerlerin <b>toplamını</b> bulmak için hangi fonksiyon kullanılır?", "o": ["add()", "max()", "total()", "sum()"], "a": 3, "e": "<code>sum(liste)</code> fonksiyonu, verilen dizideki (listedeki) tüm sayıları toplayarak sonucu verir."}, {"t": "Fonksiyonlar", "q": "Sözlüklerde <code>items()</code> metodu ne işe yarar?", "o": ["Tüm sözlüğü siler", "Sadece değerleri döndürür", "Anahtar ve değerleri ikili gruplar (çiftler) halinde birlikte döndürür", "Eleman sayısını hesaplar"], "a": 2, "e": "<code>keys()</code> anahtarları, <code>values()</code> değerleri, <code>items()</code> ise (anahtar, değer) çiftlerini birlikte sunar."}, {"t": "Fonksiyonlar", "q": "Listedeki en büyük sayıyı ve en küçük sayıyı bulmak için sırasıyla hangi fonksiyonlar kullanılır?", "o": ["max() ve min()", "top() ve bottom()", "highest() ve lowest()", "up() ve down()"], "a": 0, "e": "<code>max(liste)</code> en büyük, <code>min(liste)</code> ise en küçük elemanı döndürür."}, {"t": "Fonksiyonlar", "q": "Sözlükte var olup olmadığından emin olmadığınız bir anahtarın (key) değerini <b>hata almadan</b> okumak için hangi metot kullanılır?", "o": ["find()", "search()", "get()", "pop()"], "a": 2, "e": "<code>sozluk['hata_verir']</code> KeyError verebilir. <code>sozluk.get('anahtar')</code> ise anahtar yoksa hata fırlatmak yerine <code>None</code> döndürür."}, {"t": "Doğru / Yanlış", "q": "Bir listedeki bir elemanın değerini güncellemek için <code>append()</code> metodu kullanılır.", "o": ["Doğru", "Yanlış"], "a": 1, "e": "Yanlış. <code>append()</code> yeni bir eleman ekler. Var olan değeri güncellemek için indeksle atama yapılır, örn: <code>liste[0] = 50</code>."}, {"t": "Doğru / Yanlış", "q": "Sözlük (dictionary) veri yapısında aynı anahtardan (key) birden fazla bulunamaz.", "o": ["Doğru", "Yanlış"], "a": 0, "e": "Doğru. Anahtarlar benzersiz (unique) olmak zorundadır. Aynı anahtara tekrar atama yapılırsa eski değer ezilir."}, {"t": "Doğru / Yanlış", "q": "Python'da boşluk ve girintilerin (indentation) kural dışı kullanımı <code>IndentationError</code> hatasına yol açar.", "o": ["Doğru", "Yanlış"], "a": 0, "e": "Doğru. Diğer dillerin aksine Python blokları süslü parantez ile değil, doğrudan girintilerle tanımlar."}, {"t": "Doğru / Yanlış", "q": "<code>and</code> mantıksal operatöründe sonucun True çıkması için kontrol edilen koşullardan sadece bir tanesinin True olması yeterlidir.", "o": ["Doğru", "Yanlış"], "a": 1, "e": "Yanlış. Sadece bir tanesinin True olmasının yettiği operatör <code>or</code> operatörüdür. <code>and</code> hepsinin True olmasını şart koşar."}, {"t": "Doğru / Yanlış", "q": "Bir değişkenin güncel değeri, onun en son atanmış değeridir; önceki değerleri hafızadan silinir.", "o": ["Doğru", "Yanlış"], "a": 0, "e": "Doğru. <code>x = 5</code> dedikten sonra bir alt satırda <code>x = 10</code> derseniz, x artık 10'dur ve 5 hafızadan gider."}, {"t": "Sınır ve Özel Durumlar", "q": "Aşağıdaki kod çalıştırıldığında:<br><code>x = input('Sayı girin: ')</code><br>Kullanıcı <b>5</b> değerini girerse, <code>print(x * 2)</code> komutunun çıktısı ne olur?", "o": ["10", "55", "Hata verir", "5.0"], "a": 1, "e": "<b>Önemli Detay:</b> <code>input()</code> her zaman metin (str) döndürür. '5' metnini 2 ile çarpmak ('5' * 2), metni yan yana iki kere yazdırır: '55'."}, {"t": "Sınır ve Özel Durumlar", "q": "<code>notu = 50<br>if notu > 50:<br>&nbsp;&nbsp;print('A')<br>else:<br>&nbsp;&nbsp;print('B')</code><br>Yukarıdaki sınır değeri kontrolünde çıktı ne olur?", "o": ["A", "B", "İkisi de çalışmaz", "Hata"], "a": 1, "e": "<b>Önemli Detay:</b> Koşul ifadesinde sadece büyük (>) işareti kullanılmıştır. 50, 50'den büyük olmadığı için (eşitlik yoktur) program <code>else</code> bloğunu (B) çalıştırır."}, {"t": "Sınır ve Özel Durumlar", "q": "<code>sayilar = [10, 20, 30]<br>print(sayilar[len(sayilar)])</code><br>Yukarıdaki kod çalıştırıldığında sonuç ne olur?", "o": ["30", "20", "IndexError (Hata)", "3"], "a": 2, "e": "<b>Önemli Detay:</b> <code>len(sayilar)</code> eleman sayısını yani 3'ü verir. Ancak listelerde indeksler 0'dan başlar (0, 1, 2). <code>sayilar[3]</code> çağrıldığında indeks sınırları aşıldığı için hata verir."}, {"t": "Sınır ve Özel Durumlar", "q": "Bir sayının 3'ün katı (3'e tam bölünen) olup olmadığını kontrol etmek için en uygun koşul ifadesi hangisidir?", "o": ["if sayi / 3 == 0:", "if sayi % 3 == 0:", "if sayi // 3 == 0:", "if sayi == 3:"], "a": 1, "e": "<b>Sık Karşılaşılan Durum:</b> Bölünebilme durumları matematikte olduğu gibi kalan üzerinden incelenir. Kalanı bulmak için Mod (<code>%</code>) operatörü kullanılır."}, {"t": "Sınır ve Özel Durumlar", "q": "<code>sozluk = {'1': 'Elma', 2: 'Armut'}<br>print(sozluk[1])</code><br>Yukarıdaki kodun çıktısı nedir?", "o": ["Elma", "Armut", "KeyError (Hata)", "1"], "a": 2, "e": "<b>Önemli Detay:</b> Sözlükte <code>'1'</code> (metin) adında bir anahtar vardır, ancak biz <code>1</code> (sayı) adında bir anahtar arıyoruz. Veri türleri eşleşmediği için KeyError hatası fırlatılır."}];
+const chosen = {};
+const letters = ["A", "B", "C", "D"];
+const root = document.getElementById("questions");
+
+function render() {
+    root.innerHTML = "";
+    qs.forEach((q, i) => {
+        const el = document.createElement("article");
+        el.className = "question";
+        el.style.border = "1px solid #f3e8eb";
+        el.style.boxShadow = "none";
+        
+        let optionsHtml = "";
+        if (q.o.length === 2) {
+            optionsHtml = q.o.map((v, j) => `
+                <label class="option" style="width: fit-content; display:inline-flex; margin-right: 15px;">
+                    <input type="radio" name="q${i}" value="${j}" onchange="answer(${i},${j})">
+                    <span style="font-weight:500">${v}</span>
+                </label>
+            `).join("");
+        } else {
+            optionsHtml = q.o.map((v, j) => `
+                <label class="option">
+                    <input type="radio" name="q${i}" value="${j}" onchange="answer(${i},${j})">
+                    <span><b style="color:var(--muted)">${letters[j]}.</b> ${v}</span>
+                </label>
+            `).join("");
+        }
+
+        el.innerHTML = `
+            <div class="qmeta">
+                <span style="color:var(--blue); font-weight:700;">Soru ${i + 1}</span>
+                <span>${q.t}</span>
+            </div>
+            <p style="font-size: 1.05rem; color:#3a2e31; margin-top:5px"><strong>${q.q}</strong></p>
+            <div class="options">${optionsHtml}</div>
+            <div class="feedback" id="f${i}">
+                <b id="v${i}"></b>
+                <div style="margin-top:8px; font-size:0.95rem">${q.e}</div>
+            </div>
+            <div class="actions" style="margin-top:16px;">
+                <button onclick="solution(${i})" style="font-size: 0.85rem; padding: 6px 12px">Açıklamayı Göster</button>
+            </div>
+        `;
+        root.appendChild(el);
+    });
+    progress();
+}
+
+function answer(i, j) {
+    chosen[i] = j;
+    document.getElementById("f" + i).style.display = "none";
+    progress();
+}
+
+function progress() {
+    let n = Object.keys(chosen).length;
+    document.getElementById("progressText").textContent = `${n} / ${qs.length} cevaplandı`;
+    document.getElementById("progressFill").style.width = (n / qs.length * 100) + "%";
+}
+
+function solution(i) {
+    let q = qs[i];
+    let v = chosen[i];
+    let f = document.getElementById("f" + i);
+    f.className = "feedback" + (v !== undefined && v !== q.a ? " wrong" : "");
+    
+    let answerText = (q.o.length === 2) ? q.o[q.a] : `${letters[q.a]}. ${q.o[q.a]}`;
+    let userText = (v !== undefined) ? ((q.o.length === 2) ? q.o[v] : letters[v]) : "";
+
+    if (v === undefined) {
+        document.getElementById("v" + i).innerHTML = `<b>Doğru Cevap:</b> ${answerText}`;
+    } else if (v === q.a) {
+        document.getElementById("v" + i).innerHTML = `✅ Doğru yanıt (${answerText})`;
+    } else {
+        document.getElementById("v" + i).innerHTML = `❌ Yanlış yanıt.<br><span style="font-size:0.9em; font-weight:normal">Seçiminiz: ${userText} — Doğrusu: <b>${answerText}</b></span>`;
+    }
+    
+    f.style.display = "block";
+}
+
+function gradeExam() {
+    let correct = 0;
+    qs.forEach((q, i) => {
+        if (chosen[i] === q.a) correct++;
+        solution(i); 
+    });
+    
+    let n = Object.keys(chosen).length;
+    let r = document.getElementById("result");
+    r.style.display = "block";
+    
+    let percentage = Math.round((correct / qs.length) * 100);
+    
+    r.innerHTML = `
+        <div class="eyebrow" style="margin-bottom:10px; color:var(--blue)">TEST SONUCU</div>
+        <h2 style="margin:4px 0; color:#3a2e31; font-size:2rem">${correct} Doğru / ${qs.length - correct} Yanlış-Boş</h2>
+        <p style="font-size:1.2rem; margin:15px 0;"><b>Başarı Oranı: %${percentage}</b></p>
+        <p style="color:var(--muted); font-size:0.95rem">Cevaplanan soru: ${n} / ${qs.length}</p>
+        <button onclick="window.scrollTo({top: document.getElementById('questions').offsetTop - 80, behavior: 'smooth'})" style="margin-top:20px; background:var(--bg); color:var(--txt)">Hataları İncelemek İçin Yukarı Çık</button>
+    `;
+    
+    r.scrollIntoView({behavior: "smooth", block: "center"});
+}
+
+function resetExam() {
+    if(confirm("Tüm yanıtlarınız silinecek. Emin misiniz?")) {
+        Object.keys(chosen).forEach(k => delete chosen[k]);
+        document.getElementById("result").style.display = "none";
+        render();
+        window.scrollTo({top: document.getElementById("sinav").offsetTop - 80, behavior: "smooth"});
+    }
+}
+
+render();
+</script>
+</body>
+</html>
